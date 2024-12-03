@@ -1,10 +1,9 @@
-import json
 import re
 from bs4 import BeautifulSoup
 from nltk.corpus import wordnet
+# Author: Abigail Pitcairn
+# Version: Dec. 2, 2024
 
-# Specify how many documents you would like returned in the result file
-TOTAL_RETURN_DOCUMENTS = 100
 
 # Define stop words to be removed from index
 STOP_WORDS = {"the", "of", "to", "a", "in", "is", "it", "you", "that", "he", "was", "for", "on", "are", "as", "with",
@@ -15,42 +14,6 @@ STOP_WORDS = {"the", "of", "to", "a", "in", "is", "it", "you", "that", "he", "wa
               "only", "little", "know", "place", "very", "after", "our", "just", "most", "before", "too", "any", "same",
               "tell", "such", "because", "why", "also", "well", "must", "even", "here", "off", "again", "still",
               "should"}
-
-
-def clean_and_tokenize(text):
-    """
-    Clean HTML, tokenize text, and remove stop words.
-
-    Args:
-        text (str): Raw document text.
-
-    Returns:
-        list: List of filtered tokens.
-    """
-    if not isinstance(text, str):
-        raise ValueError(f"Expected string for text, but got {type(text)}: {text}")
-    clean_text = BeautifulSoup(text, "html.parser").get_text()
-    tokens = re.findall(r'\b\w+\b', clean_text.lower())
-    return [word for word in tokens if word not in STOP_WORDS]
-
-
-def expand_query(query):
-    """
-    Expand the query using WordNet synonyms.
-
-    Args:
-        query (str): The input query.
-
-    Returns:
-        str: The expanded query string.
-    """
-    expanded_terms = set()
-    terms = clean_and_tokenize(query)
-    for term in terms:
-        expanded_terms.add(term)  # Include the original term
-        for syn in wordnet.synsets(term):
-            expanded_terms.update(lemma.name().lower() for lemma in syn.lemmas())  # Add synonyms
-    return ' '.join(expanded_terms)  # Return the expanded query as a single string
 
 
 def query_process(query):
@@ -69,31 +32,47 @@ def query_process(query):
     return expanded_query_text, query_id
 
 
-def save_to_result_file(results, output_file):
+def expand_query(query, max_synonyms=3):
     """
-    Save search results to an output file.
+    Expand the query using WordNet synonyms.
 
     Args:
-        results (dict): The search results.
-        output_file (str): The output file path.
-    """
-    with open(output_file, 'w') as f:
-        for query_id, dic_result in results.items():
-            for rank, (doc_id, score) in enumerate(dic_result.items(), start=1):
-                f.write(f"{query_id} 0 {doc_id} {rank} {score:.6f} Run1\n")
-                if rank >= TOTAL_RETURN_DOCUMENTS:  # Only return the top results
-                    break
-
-
-def load_json_file(file_path):
-    """
-    Load JSON file into a Python object.
-
-    Args:
-        file_path (str): Path to the JSON file.
+        query (str): The input query.
+        max_synonyms (int): Maximum number of synonyms to add to query.
 
     Returns:
-        list: List of document dictionaries.
+        str: The expanded query string.
     """
-    with open(file_path, 'r') as file:
-        return json.load(file)
+    expanded_terms = set()
+    terms = clean_and_tokenize(query)
+    for term in terms:
+        expanded_terms.add(term)  # Include the original term
+        # Add up to `max_synonyms` synonyms for the term
+        synonyms_added = 0
+        for syn in wordnet.synsets(term):
+            for lemma in syn.lemmas():
+                if lemma.name().lower() != term:  # Avoid adding the original term again
+                    expanded_terms.add(lemma.name().lower())
+                    synonyms_added += 1
+                    if synonyms_added >= max_synonyms:
+                        break
+            if synonyms_added >= max_synonyms:
+                break
+    return ' '.join(expanded_terms)  # Return the expanded query as a single string
+
+
+def clean_and_tokenize(text):
+    """
+    Clean HTML, tokenize text, and remove stop words.
+
+    Args:
+        text (str): Raw document text.
+
+    Returns:
+        list: List of filtered tokens.
+    """
+    if not isinstance(text, str):
+        raise ValueError(f"Expected string for text, but got {type(text)}: {text}")
+    clean_text = BeautifulSoup(text, "html.parser").get_text()
+    tokens = re.findall(r'\b\w+\b', clean_text.lower())
+    return [word for word in tokens if word not in STOP_WORDS]
