@@ -1,8 +1,5 @@
 from ranx import Qrels, Run, evaluate
 import matplotlib.pyplot as plt
-
-# Using ranx software, calculate P@1, P@5, nDCG@5, MRR, and MAP.
-# Must MANUALLY ENTER the file name to evaluate
 # Author: Abigail Pitcairn
 # Version: Dec. 2, 2024
 
