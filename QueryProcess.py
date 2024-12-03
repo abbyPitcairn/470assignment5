@@ -16,20 +16,22 @@ STOP_WORDS = {"the", "of", "to", "a", "in", "is", "it", "you", "that", "he", "wa
               "should"}
 
 
-def query_process(query):
+def query_process(query, expansion):
     """
     Process a single query by extracting its ID and expanding its text.
 
     Args:
         query (dict): A dictionary containing query data.
+        expansion (bool): True if query is to be expanded.
 
     Returns:
         tuple: The expanded query text and the query ID.
     """
     query_id = query['Id']
     query_text = f"{query['Title']} {query['Body']}"
-    expanded_query_text = expand_query(query_text)
-    return expanded_query_text, query_id
+    if expansion:
+        query_text = expand_query(query_text)
+    return query_text, query_id
 
 
 def expand_query(query, max_synonyms=3):
