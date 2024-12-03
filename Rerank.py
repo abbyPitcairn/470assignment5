@@ -1,7 +1,7 @@
 import os
 import torch
+from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
-from transformers import AutoModel
 import numpy as np
 import QueryProcess
 # Author: Abigail Pitcairn
@@ -10,9 +10,7 @@ import QueryProcess
 # Load BERT model
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 os.environ["WAND_DISABLED"] = "true"
-basic_model = AutoModel.from_pretrained('sentence-transformers/all-mpnet-base-v2')
-model = torch.quantization.quantize_dynamic(
-    basic_model, {torch.nn.Linear}, dtype=torch.qint8)
+model = SentenceTransformer('sentence-transformers/all-mpnet-base-v2')
 
 
 def rerank(search_results, queries, docs):
@@ -36,9 +34,8 @@ def rerank(search_results, queries, docs):
     # Iterate over each query
     for query_data in queries:
         # Encode the query using the BERT model
-        query_id = query_data['Id']
-        query_text = QueryProcess.clean_and_tokenize(f"{query_data['Title']} {query_data['Body']}")
-        q_embedding = model.encode(query_text, batch_size=32, convert_to_tensor=True)
+        query_text, query_id = QueryProcess.query_process(query_data, False)
+        q_embedding = model.encode(query_text, convert_to_tensor=True)
 
         # Prepare a list to hold document similarity scores
         doc_scores = []
