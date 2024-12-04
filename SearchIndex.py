@@ -29,7 +29,7 @@ def search_index(query, inverted_index):
     this method. The set is ordered from the highest score to the lowest score.
 
     Args:
-        query (str): the preprocessed query text.
+        query (list): the preprocessed query text.
         inverted_index (default dict): the inverted index to search over.
 
     Returns:

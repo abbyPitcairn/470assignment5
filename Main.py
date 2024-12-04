@@ -56,16 +56,19 @@ def main(answers, topics1, topics2):
 
 
 # # Terminal Command: python Main.py Answers.json topics_1.json topics_2.json
-if __name__ == "__main__":
-    # Ensure three arguments are passed (answers.json and topics.json)
-    if len(sys.argv) != 4:
-        print("Usage: python main.py <answers.json> <topics_1.json> <topics_2.json")
-        sys.exit(1)
+# if __name__ == "__main__":
+#     # Ensure three arguments are passed (answers.json and topics.json)
+#     if len(sys.argv) != 4:
+#         print("Usage: python main.py <answers.json> <topics_1.json> <topics_2.json")
+#         sys.exit(1)
+#
+#     # Get file paths from command line arguments
+#     answers_file = sys.argv[1]
+#     topics1_file = sys.argv[2]
+#     topics2_file = sys.argv[3]
+#
+#     # Call the main function with the file paths
+#     main(answers_file, topics1_file, topics2_file)
 
-    # Get file paths from command line arguments
-    answers_file = sys.argv[1]
-    topics1_file = sys.argv[2]
-    topics2_file = sys.argv[3]
-
-    # Call the main function with the file paths
-    main(answers_file, topics1_file, topics2_file)
+# Manual run code (remember to comment out the above block)
+main("Answers.json", "topics_1.json", "topics_2.json")

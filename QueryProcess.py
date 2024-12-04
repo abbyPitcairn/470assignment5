@@ -25,29 +25,32 @@ def query_process(query, expansion):
         expansion (bool): True if query is to be expanded.
 
     Returns:
-        tuple: The expanded query text and the query ID.
+        if expansion:
+            tuple: list of cleaned and expanded terms and int query id
+        else:
+            tuple: str query and int query id
     """
     query_id = query['Id']
     query_text = f"{query['Title']} {query['Body']}"
     if expansion:
-        query_text = expand_query(query_text)
-    return query_text, query_id
+        terms = expand_query(list(query_text))
+        return terms, query_id
+    return query_text.lower(), query_id
 
 
-def expand_query(query, max_synonyms=3):
+def expand_query(query, max_synonyms=2):
     """
     Expand the query using WordNet synonyms.
 
     Args:
-        query (str): The input query.
+        query (list): The list of terms from input query.
         max_synonyms (int): Maximum number of synonyms to add to query.
 
     Returns:
-        str: The expanded query string.
+        list: The expanded query terms.
     """
     expanded_terms = set()
-    terms = clean_and_tokenize(query)
-    for term in terms:
+    for term in query:
         expanded_terms.add(term)  # Include the original term
         # Add up to `max_synonyms` synonyms for the term
         synonyms_added = 0
@@ -60,7 +63,7 @@ def expand_query(query, max_synonyms=3):
                         break
             if synonyms_added >= max_synonyms:
                 break
-    return ' '.join(expanded_terms)  # Return the expanded query as a single string
+    return set(expanded_terms)
 
 
 def clean_and_tokenize(text):
@@ -77,4 +80,4 @@ def clean_and_tokenize(text):
         raise ValueError(f"Expected string for text, but got {type(text)}: {text}")
     clean_text = BeautifulSoup(text, "html.parser").get_text()
     tokens = re.findall(r'\b\w+\b', clean_text.lower())
-    return [word for word in tokens if word not in STOP_WORDS]
+    return {word for word in tokens if word not in STOP_WORDS}

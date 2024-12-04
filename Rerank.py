@@ -10,7 +10,7 @@ import QueryProcess
 # Load BERT model
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 os.environ["WAND_DISABLED"] = "true"
-model = SentenceTransformer('sentence-transformers/all-mpnet-base-v2')
+model = SentenceTransformer('all-MiniLM-L6-v2')
 
 
 def rerank(search_results, queries, docs):
