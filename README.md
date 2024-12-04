@@ -1,6 +1,8 @@
-# 470assignment5
-This is an assignment for COS470 Intro to Information Retrieval that implements a variety of techniques from the course to create an effective information retrieval system.
+# Information Retrieval System
+This is an assignment for COS470: Intro to Information Retrieval at the University of Southern Maine.
+
+It implements a variety of techniques from the course to create an effective information retrieval system.
 
 Author: Abigail Pitcairn
 
-Version: November 26, 2024
+Version: DEcember 4, 2024
