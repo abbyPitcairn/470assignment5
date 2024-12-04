@@ -1,4 +1,3 @@
-import Evaluation
 import FileProcess
 import InvertedIndex
 import SearchIndex
@@ -36,12 +35,6 @@ def main(answers, topics1, topics2):
     search_result1 = SearchIndex.search_index_by_query(queries1, index)
     search_result2 = SearchIndex.search_index_by_query(queries2, index)
 
-    # Save results
-    FileProcess.save_to_result_file(search_result1, result1_file_name)
-    FileProcess.save_to_result_file(search_result2, result2_file_name)
-
-    #Evaluation.evaluate_search_result('qrel_1.tsv', result1_file_name)
-
     # Perform reranking with BERT
     print("Reranking search results with BERT...")
     reranked_result1 = Rerank.rerank(search_result1, queries1, documents)
@@ -52,23 +45,18 @@ def main(answers, topics1, topics2):
     FileProcess.save_to_result_file(reranked_result2, result2_file_name)
     print(f"Final results for topics1 and topics2 saved to {result1_file_name} and {result2_file_name}.")
 
-    Evaluation.evaluate_search_result('qrel_1.tsv', result1_file_name)
 
+# Terminal Command: python Main.py Answers.json topics_1.json topics_2.json
+if __name__ == "__main__":
+    # Ensure three arguments are passed (answers.json and topics.json)
+    if len(sys.argv) != 4:
+        print("Usage: python main.py <answers.json> <topics_1.json> <topics_2.json")
+        sys.exit(1)
 
-# # Terminal Command: python Main.py Answers.json topics_1.json topics_2.json
-# if __name__ == "__main__":
-#     # Ensure three arguments are passed (answers.json and topics.json)
-#     if len(sys.argv) != 4:
-#         print("Usage: python main.py <answers.json> <topics_1.json> <topics_2.json")
-#         sys.exit(1)
-#
-#     # Get file paths from command line arguments
-#     answers_file = sys.argv[1]
-#     topics1_file = sys.argv[2]
-#     topics2_file = sys.argv[3]
-#
-#     # Call the main function with the file paths
-#     main(answers_file, topics1_file, topics2_file)
+    # Get file paths from command line arguments
+    answers_file = sys.argv[1]
+    topics1_file = sys.argv[2]
+    topics2_file = sys.argv[3]
 
-# Manual run code (remember to comment out the above block)
-main("Answers.json", "topics_1.json", "topics_2.json")
+    # Call the main function with the file paths
+    main(answers_file, topics1_file, topics2_file)

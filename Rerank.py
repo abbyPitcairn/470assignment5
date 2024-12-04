@@ -1,8 +1,6 @@
 import os
 import torch
 from sentence_transformers import SentenceTransformer
-from sklearn.metrics.pairwise import cosine_similarity
-import numpy as np
 import QueryProcess
 # Author: Abigail Pitcairn
 # Version: Dec. 2, 2024
@@ -45,7 +43,7 @@ def rerank(search_results, queries, docs):
             if doc_id in doc_embeddings:
                 d_embedding = doc_embeddings[doc_id]
                 # Calculate cosine similarity
-                similarity_score = cosine_similarity(q_embedding, d_embedding)
+                similarity_score = model.cosine_similarity(q_embedding, d_embedding)
                 # Append the document ID and its similarity score
                 doc_scores.append((doc_id, similarity_score))
 
