@@ -9,11 +9,11 @@ def evaluate_search_result(qrel_file_name, result_file_name):
     run = Run.from_file(result_file_name, kind='trec')
 
     # Run tests and print results
-    print(f'P@1: {evaluate(qrel, run, "precision@1", make_comparable=True)}')
-    print(f'P@5: {evaluate(qrel, run, "precision@5", make_comparable=True)}')
+    print(f'P@1:    {evaluate(qrel, run, "precision@1", make_comparable=True)}')
+    print(f'P@5:    {evaluate(qrel, run, "precision@5", make_comparable=True)}')
     print(f'nDCG@5: {evaluate(qrel, run, "ndcg@5", make_comparable=True)}')
-    print(f'MRR: {evaluate(qrel, run, "mrr", make_comparable=True)}')
-    print(f'MAP: {evaluate(qrel, run, "map", make_comparable=True)}')
+    print(f'MRR:    {evaluate(qrel, run, "mrr", make_comparable=True)}')
+    print(f'MAP:    {evaluate(qrel, run, "map", make_comparable=True)}')
 
     # ski_jump_data = (evaluate(qrel, run, "precision@5", return_mean=False, make_comparable=True))
 
