@@ -26,7 +26,7 @@ def rerank(search_results, queries, docs):
         dict: Reranked results with query IDs mapping to reranked document IDs.
     """
     # Build a dictionary of documents for quick lookup
-    docs_dict = get_docs_dict(docs)
+    doc_embeddings = get_doc_embedding_dict(docs)
 
     # Initialize a dictionary for reranked results
     reranked_results = {}
@@ -42,20 +42,20 @@ def rerank(search_results, queries, docs):
 
         # Iterate over the top search results for this query
         for doc_id in search_results.get(query_id, []):
-            if doc_id in docs_dict:
-                d_embedding = docs_dict[doc_id]
+            if doc_id in doc_embeddings:
+                d_embedding = doc_embeddings[doc_id]
                 # Calculate cosine similarity
                 similarity_score = cosine_similarity(q_embedding, d_embedding)
                 # Append the document ID and its similarity score
                 doc_scores.append((doc_id, similarity_score))
 
-        # Sort the documents by similarity score in descending order
-        reranked_results[query_id] = [doc_id for doc_id, _ in sorted(doc_scores, key=lambda x: x[1], reverse=True)]
-
-    return reranked_results
+    # Sort the documents by similarity score in descending order
+    return {k: v for k, v in sorted(reranked_results.items(), key=lambda item: item[1], reverse=True)}
 
 
-def get_docs_dict(docs):
-    # Convert to NumPy array for efficient processing
-    doc_embeddings_array = np.array([model.encode(doc, batch_size=32, convert_to_tensor=True) for doc in docs])
-    return doc_embeddings_array
+def get_doc_embedding_dict(docs):
+    doc_embeddings = {}
+    for doc in docs:
+        doc_id = doc['Id']
+        doc_embeddings[doc_id] = model.encode(doc['Text'])
+    return doc_embeddings
